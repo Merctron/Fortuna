@@ -58,11 +58,15 @@ note, note_text = generate_note(selections)
 note_json       = json.dumps(note,
                              default=lambda obj: obj.isoformat()) # Supply lambda to serialize datetime.
 
-note_name = "{}{:02d}{:02d}.fortuna.json".format(note["date"].year, note["date"].month, note["date"].day)
-if os.path.exists(note_name):
+note_name  = "{}{:02d}{:02d}.fortuna.json".format(note["date"].year, note["date"].month, note["date"].day)
+cache_path = os.path.join(os.environ["LOCALAPPDATA"], "fortuna", "cache")
+note_path = os.path.join(cache_path, note_name)
+if not os.path.exists(note_path):
+    os.makedirs(os.path.dirname(note_path))
+if os.path.exists(note_path):
     print("A note for {} has already been generated!".format(note["date"].isoformat()))
     exit(0)
-note_file = open(note_name, "a")
+note_file = open(note_path, "a")
 json.dump(note_json, note_file)
 
 print(note_text)
